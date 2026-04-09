@@ -2,6 +2,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const { program } = require('commander');
 const path = require('node:path');
+const superagent = require('superagent');
 
 program
     .requiredOption('-h, --host <host>', 'server host')
@@ -24,8 +25,15 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(200, { 'Content-Type': 'image/jpeg' });
             res.end(file);
         } catch {
-            res.statusCode = 404;
-            res.end('Not found');
+            try {
+                const response = await superagent.get(`https://http.cat/${code}`);
+                await fs.promises.writeFile(filePath, response.body);
+                res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+                res.end(response.body);
+            } catch {
+                res.statusCode = 404;
+                res.end('Not found');
+            }
         }
 
     } else if (req.method === 'PUT') {

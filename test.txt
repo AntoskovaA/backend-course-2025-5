@@ -1,0 +1,20 @@
+# PUT - зберегти картинку у кеш
+curl -X PUT http://localhost:3000/200 --data-binary @image.jpg
+
+# GET - отримати картинку з кешу
+curl -X GET http://localhost:3000/200 --output result.jpg
+
+# GET - неіснуючий код (404)
+curl -X GET http://localhost:3000/999
+
+# DELETE - видалити з кешу
+curl -X DELETE http://localhost:3000/200
+
+# DELETE - вже видаленого (404)
+curl -X DELETE http://localhost:3000/200
+
+# GET після DELETE (404)
+curl -X GET http://localhost:3000/200
+
+# Невірний метод (405)
+curl -X POST http://localhost:3000/200

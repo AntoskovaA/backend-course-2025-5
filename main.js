@@ -27,8 +27,16 @@ async function handleGet(filePath, code, res) {
             res.writeHead(200, { 'Content-Type': 'image/jpeg' });
             res.end(response.body);
         } catch {
-            res.statusCode = 404;
-            res.end('Not found');
+            //  (неправильний код) завантажуємо кота 200
+            try {
+                const fallbackResponse = await superagent.get(`https://http.cat/200`);
+                res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+                res.end(fallbackResponse.body);
+            } catch (fallbackError) {
+                // На випадок, якщо навіть http.cat/200 недоступний
+                res.statusCode = 404;
+                res.end('Not found and fallback failed');
+            }
         }
     }
 }
